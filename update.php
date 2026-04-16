@@ -13,8 +13,25 @@ $catatan = $_POST['catatan'];
 $resepdokter = $_POST['resep_dokter'] == 1 ? TRUE : FALSE;
 $frekuensi = $_POST['frekuensi_pemakaian'];
 
-$query = $conn->query("INSERT INTO obat
-(user_id, nama_obat, dosis, jumlah, kategori , cara_penggunaan, efek_samping, tanggal_kadaluarsa, catatan, resep_dokter, frekuensi_pemakaian)
-values (1, '$namaObat', '$dosis', $jumlah, '$kategori' , '$caraKonsumsi', '$efekSamping', '$tglKadaluarsa', '$catatan', '$resepdokter', $frekuensi)");
+if ($_GET['why'] == 'save') {
+    $query = $conn->query("INSERT INTO obat
+            (user_id, nama_obat, dosis, jumlah, kategori , cara_penggunaan, efek_samping, tanggal_kadaluarsa, catatan, resep_dokter, frekuensi_pemakaian)
+            values (1, '$namaObat', '$dosis', $jumlah, '$kategori' , '$caraKonsumsi', '$efekSamping', '$tglKadaluarsa', '$catatan', '$resepdokter', $frekuensi)");
+} else { //edit
+    $id = $_GET['why'];
+    $query = $conn->query("UPDATE obat SET
+                            nama_obat = '$namaObat'
+                            , dosis = '$dosis'
+                            , jumlah = $jumlah
+                            , kategori  = '$kategori'
+                            , cara_penggunaan = '$caraKonsumsi'
+                            , efek_samping = '$efekSamping'
+                            , tanggal_kadaluarsa = '$tglKadaluarsa'
+                            , catatan = '$catatan'
+                            , resep_dokter = '$resepdokter'
+                            , frekuensi_pemakaian = $frekuensi
+                            where id = $id
+                            ");
+}
 
-header("location:dashboard.php");
+header("location:dashboard.php?status=success");
