@@ -3,7 +3,7 @@ $hostname = "localhost";
 $username = "root";
 $password = "";
 $database = "db_manajemen_obat";
-$port = "3309";
+$port = "3306";
 
 $conn = new mysqli($hostname, $username, $password, $database, $port);
 
