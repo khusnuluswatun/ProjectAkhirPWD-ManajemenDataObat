@@ -1,3 +1,8 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <!doctype html>
 <html lang="en">
 
@@ -41,7 +46,7 @@
         </a>
         <!-- <input class="form-control form-control w-100" type="text" placeholder="Search" aria-label="Search"> -->
         <div class="d-flex align-items-center gap-2">
-            <a class="nav-link px-3" href="#"><img src="assets/img/profile.jpeg" class="img-profile"> Khusnul Uswatun</a>
+            <img src="assets/img/profile.png" class="img-profile"> <?= strtoupper($_SESSION['username']); ?>
         </div>
     </header>
 
@@ -67,7 +72,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'logout.php' ? 'active' : '' ?>">
+                            <a href="logout.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'logout.php' ? 'active' : '' ?>">
                                 <svg class="bi me-2" width="16" height="16">
                                     <use xlink:href="#box-arrow-right" />
                                 </svg>

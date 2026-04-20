@@ -1,6 +1,8 @@
 <?php
+session_start();
 include "koneksi.php";
-// dd($_POST);
+
+$user_id = $_SESSION['id']; 
 
 $namaObat = $_POST['nama_obat'];
 $dosis = $_POST['dosis'];
@@ -16,7 +18,7 @@ $frekuensi = $_POST['frekuensi_pemakaian'];
 if ($_GET['why'] == 'save') {
     $query = $conn->query("INSERT INTO obat
             (user_id, nama_obat, dosis, jumlah, kategori , cara_penggunaan, efek_samping, tanggal_kadaluarsa, catatan, resep_dokter, frekuensi_pemakaian)
-            values (1, '$namaObat', '$dosis', $jumlah, '$kategori' , '$caraKonsumsi', '$efekSamping', '$tglKadaluarsa', '$catatan', '$resepdokter', $frekuensi)");
+            values ($user_id, '$namaObat', '$dosis', $jumlah, '$kategori' , '$caraKonsumsi', '$efekSamping', '$tglKadaluarsa', '$catatan', '$resepdokter', $frekuensi)");
 } else { //edit
     $id = $_GET['why'];
     $query = $conn->query("UPDATE obat SET
