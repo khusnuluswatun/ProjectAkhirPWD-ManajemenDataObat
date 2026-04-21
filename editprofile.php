@@ -24,21 +24,18 @@ $data = mysqli_fetch_assoc($query);
 
     <form method="POST">
 
-        <!-- NAMA -->
         <div class="mb-3">
             <label class="form-label">Nama Lengkap</label>
             <input type="text" name="nama_lengkap" class="form-control"
                    value="<?= htmlspecialchars($data['nama_lengkap']) ?>" required>
         </div>
 
-        <!-- EMAIL -->
         <div class="mb-3">
             <label class="form-label">Email</label>
             <input type="email" name="email" class="form-control"
                    value="<?= htmlspecialchars($data['email']) ?>" required>
         </div>
 
-        <!-- GRID -->
         <div class="row">
 
             <div class="col-md-6 mb-3">
@@ -55,19 +52,17 @@ $data = mysqli_fetch_assoc($query);
 
         </div>
 
-        <!-- ALAMAT -->
         <div class="mb-3">
             <label class="form-label">Alamat</label>
             <textarea name="alamat" class="form-control" rows="3" required><?= htmlspecialchars($data['alamat']) ?></textarea>
         </div>
 
-        <!-- PASSWORD -->
         <div class="mb-3">
             <label class="form-label">Password Baru (opsional)</label>
             <input type="password" name="password" class="form-control" placeholder="Kosongkan jika tidak diubah">
         </div>
 
-        <!-- BUTTON -->
+
         <div class="text-center mt-4">
             <button type="submit" name="update" class="btn btn-primary px-4">
                 Save changes
@@ -90,7 +85,7 @@ if(isset($_POST['update'])){
     $tgl = $_POST['tgl_lahir'];
     $alamat = $_POST['alamat'];
 
-    // update data utama
+ 
     mysqli_query($conn, "UPDATE users SET
         nama_lengkap='$nama',
         email='$email',
@@ -100,13 +95,13 @@ if(isset($_POST['update'])){
         WHERE id=$id
     ");
 
-    // update password kalau diisi
+   
     if(!empty($_POST['password'])){
         $pass = md5($_POST['password']);
         mysqli_query($conn, "UPDATE users SET password='$pass' WHERE id=$id");
     }
 
-    // update session
+ 
     $_SESSION['nama_lengkap'] = $nama;
 
     echo "<script>

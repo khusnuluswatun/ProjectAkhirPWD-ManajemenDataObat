@@ -12,7 +12,6 @@ $id = (int) $_SESSION['id'];
 $query = mysqli_query($conn, "SELECT * FROM users WHERE id=$id");
 $data = mysqli_fetch_assoc($query);
 
-// format nomor pasien
 $no_pasien = 'PSN-' . str_pad($data['id'], 4, '0', STR_PAD_LEFT);
 ?>
 
@@ -26,7 +25,6 @@ $no_pasien = 'PSN-' . str_pad($data['id'], 4, '0', STR_PAD_LEFT);
         <div class="card shadow border-0 rounded-4">
             <div class="card-body text-center">
 
-                <!-- FOTO PROFIL DEFAULT -->
                 <img src="assets/img/profile.png" width="80" class="mb-3">
 
                 <h4 class="mb-1"><?= htmlspecialchars(strtoupper($data['nama_lengkap'])) ?></h4>
