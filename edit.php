@@ -37,7 +37,7 @@ $es = explode("||", $data['efek_samping']);
                         </div>
                         <div class="col">
                             <label for="jumlah" class="col-form-label">Jumlah</label>
-                            <input value="<?= $data['jumlah'] ?>" type="number" name="jumlah" class="form-control" id="jumlah" required min="1" max="1000">
+                            <input value="<?= $data['jumlah'] ?>" type="number" name="jumlah" class="form-control" id="jumlah" required min="0" max="1000">
                         </div>
                         <div class="col">
                             <label for="kategori" class="col-form-label">Kategori</label>
@@ -56,7 +56,7 @@ $es = explode("||", $data['efek_samping']);
                         </div>
                         <div class="col-4">
                             <label for="tgl_kadaluarsa" class="col-form-label">Tgl. kadaluarsa</label>
-                            <input value="<?= $data['tanggal_kadaluarsa'] ?>" type="date" name="tgl_kadaluarsa" id="tgl_kadaluarsa" class="form-control" required min="<?= date('Y-m-d') ?>">
+                            <input value="<?= $data['tanggal_kadaluarsa'] ?>" type="date" name="tgl_kadaluarsa" id="tgl_kadaluarsa" class="form-control" required min="<?= $data['tanggal_kadaluarsa'] ?>">
                         </div>
                     </div>
                     <div class="mb-2">
