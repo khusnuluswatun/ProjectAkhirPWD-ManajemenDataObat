@@ -1,7 +1,10 @@
 <?php
-$id = 1;
+
+session_start();
 include "koneksi.php";
-$query = $conn->query("SELECT * FROM obat WHERE user_id = $id");
+$id = $_SESSION['id'];
+
+$query = mysqli_query($conn, "SELECT * FROM obat WHERE user_id = '$id'");
 $data = [];
 while ($row = mysqli_fetch_assoc($query)) {
     $data[] = $row;
