@@ -46,7 +46,7 @@ if (session_status() === PHP_SESSION_NONE) {
         </a>
         <!-- <input class="form-control form-control w-100" type="text" placeholder="Search" aria-label="Search"> -->
         <div class="d-flex align-items-center gap-2">
-            <img src="assets/img/profile.png" class="img-profile"> <?= strtoupper($_SESSION['username']); ?>
+            <img src="assets/img/profile.png" class="img-profile"> <?= strtoupper($_SESSION['nama_lengkap']); ?>
         </div>
     </header>
 

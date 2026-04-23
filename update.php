@@ -19,7 +19,7 @@ if ($_GET['why'] == 'save') {
     $query = $conn->query("INSERT INTO obat
             (user_id, nama_obat, dosis, jumlah, kategori , cara_penggunaan, efek_samping, tanggal_kadaluarsa, catatan, resep_dokter, frekuensi_pemakaian)
             values ($user_id, '$namaObat', '$dosis', $jumlah, '$kategori' , '$caraKonsumsi', '$efekSamping', '$tglKadaluarsa', '$catatan', '$resepdokter', $frekuensi)");
-} else { //edit
+} else { 
     $id = $_GET['why'];
     $query = $conn->query("UPDATE obat SET
                             nama_obat = '$namaObat'

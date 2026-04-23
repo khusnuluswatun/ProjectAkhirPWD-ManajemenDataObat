@@ -1,6 +1,28 @@
 <?php
 session_start();
 include "koneksi.php";
+
+if(isset($_POST['login'])){
+    $username = $_POST['username'];
+    $password = md5($_POST['password']);
+
+    $cek = mysqli_query($conn, "SELECT * FROM users WHERE username='$username' AND password='$password'");
+    $data = mysqli_fetch_assoc($cek);
+
+    if($data){
+        $_SESSION['id'] = $data['id'];
+        $_SESSION['username'] = $data['username'];
+        $_SESSION['role'] = $data['role'];
+        $_SESSION['nama_lengkap'] = $data['nama_lengkap'];
+
+
+        header("Location: dashboard.php");
+        exit;
+    } else {
+        echo "<script>alert('Login gagal');</script>";
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -33,6 +55,11 @@ include "koneksi.php";
             background: white;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             text-align: center;
+
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .login-card h5 {
@@ -75,7 +102,7 @@ include "koneksi.php";
     </div>
 
     <form method="POST">
-        <div id="loginForm">
+        <div id="loginForm"style="margin-top:15px;">
             <h5>Welcome Back</h5>
 
             <input type="text" name="username" class="form-control" placeholder="Username" required>
@@ -96,7 +123,15 @@ include "koneksi.php";
         <div id="registerForm" style="display:none; margin-top:15px;">
             <h5>Create Account</h5>
 
+            <input type="text" name="nama_lengkap_reg" class="form-control" placeholder="Nama Lengkap" required>
             <input type="text" name="username_reg" class="form-control" placeholder="Username" required>
+            <div class="form-floating mb-3">
+                <input type="date" class="form-control" name="tgl_lahir_reg" required>
+                <label>Tanggal Lahir</label>
+            </div>
+            <input type="text" name="email_reg" class="form-control" placeholder="Email" required>
+            <input type="text" name="no_hp_reg" class="form-control" placeholder="Nomor Telephone" required>
+            <input type="text" name="alamat_reg" class="form-control" placeholder="Alamat" required>
             <input type="password" name="password_reg" class="form-control" placeholder="Password" required>
 
             <button name="register" class="btn btn-custom w-100">Create Account</button>
@@ -127,36 +162,22 @@ function showLogin(){
 
 <?php
 
-if(isset($_POST['login'])){
-    $username = $_POST['username'];
-    $password = md5($_POST['password']);
-
-    $cek = mysqli_query($conn, "SELECT * FROM users WHERE username='$username' AND password='$password'");
-    $data = mysqli_fetch_assoc($cek);
-
-    if($data){
-        $_SESSION['id'] = $data['id'];
-        $_SESSION['username'] = $data['username'];
-        $_SESSION['role'] = $data['role'];
-
-        header("Location: dashboard.php");
-        exit;
-    } else {
-        echo "<script>alert('Login gagal');</script>";
-    }
-}
-
 if(isset($_POST['register'])){
     $username = $_POST['username_reg'];
     $password = md5($_POST['password_reg']);
+    $nama_lengkap = $_POST['nama_lengkap_reg'];
+    $email = $_POST['email_reg'];
+    $tgl_lahir = $_POST['tgl_lahir_reg'];
+    $no_hp = $_POST['no_hp_reg'];
+    $alamat = $_POST['alamat_reg'];
 
     $cek = mysqli_query($conn, "SELECT * FROM users WHERE username='$username'");
 
     if(mysqli_num_rows($cek) > 0){
         echo "<script>alert('Username sudah digunakan!');</script>";
     } else {
-        mysqli_query($conn, "INSERT INTO users (username, password, role) 
-                             VALUES ('$username','$password','user')");
+        mysqli_query($conn, "INSERT INTO users (username, password, role, nama_lengkap, email, tgl_lahir, no_hp, alamat) 
+                             VALUES ('$username','$password','user','$nama_lengkap', '$email', '$tgl_lahir ', '$no_hp', '$alamat' )");
 
         echo "<script>alert('Register berhasil, silakan login');</script>";
     }
