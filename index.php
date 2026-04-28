@@ -1,185 +1,341 @@
-<?php
-session_start();
-include "koneksi.php";
-
-if(isset($_POST['login'])){
-    $username = $_POST['username'];
-    $password = md5($_POST['password']);
-
-    $cek = mysqli_query($conn, "SELECT * FROM users WHERE username='$username' AND password='$password'");
-    $data = mysqli_fetch_assoc($cek);
-
-    if($data){
-        $_SESSION['id'] = $data['id'];
-        $_SESSION['username'] = $data['username'];
-        $_SESSION['role'] = $data['role'];
-        $_SESSION['nama_lengkap'] = $data['nama_lengkap'];
-
-
-        header("Location: dashboard.php");
-        exit;
-    } else {
-        echo "<script>alert('Login gagal');</script>";
-    }
-}
-
-?>
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
+
 <head>
     <meta charset="UTF-8">
-    <title>MedVault</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediTrack</title>
 
-    <link rel="stylesheet" href="assets/font-awesome-4.7.0/css/font-awesome.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/css/dashboard.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
         body {
+            font-family: 'Poppins', sans-serif;
             margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            height: 100vh;
+        }
+
+        .navbar {
+            padding: 15px 40px;
+            background: #ffffff;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-weight: 600;
             display: flex;
-            justify-content: center;
             align-items: center;
-
-            background: url('assets/img/bg.jpeg') no-repeat center center fixed;
-            background-size: cover;
+            gap: 8px;
         }
 
-        .login-card {
-            width: 360px;
-            padding: 30px;
-            border-radius: 16px;
-            background: white;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            text-align: center;
-
-            min-height: 420px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+        .home {
+            min-height: 90vh;
         }
 
-        .login-card h5 {
-            margin-bottom: 10px;
+        .home-left {
+            padding: 80px;
+        }
+
+        .home-left h1 {
+            font-size: 42px;
             font-weight: 600;
         }
 
-        .form-control {
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 12px;
-        }
-
-        .btn-custom {
-            background: linear-gradient(to right, #4facfe, #0066ff);
-            border: none;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .small-text {
-            font-size: 13px;
-            color: #888;
+        .home-left p {
             margin-top: 15px;
+            color: #6c757d;
+        }
+
+        #fitur {
+            background-color: #0d6efd;
+            height: 80vh;
+        }
+
+        .btn-main {
+            margin-top: 20px;
+            background: #2b7cff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+
+        .btn-main:hover {
+            background: #1f63d8;
+        }
+
+        .home-right {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .img-right {
+            width: 400px;
+            object-fit: cover;
+            overflow: hidden;
+        }
+
+        .bubble {
+            position: absolute;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .bubble-1 {
+            top: 80px;
+            left: 60px;
+        }
+
+        .bubble-2 {
+            top: 120px;
+            right: 60px;
+        }
+
+        .bubble-3 {
+            bottom: 80px;
+            right: 80px;
+        }
+
+        .section {
+            padding: 50px 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        section {
+            scroll-margin-top: 80px;
+        }
+
+
+        .box-fitur {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: 0.3s;
+        }
+
+        .box-fitur:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .icon-fitur {
+            font-size: 35px;
+            color: #2b7cff;
+            margin-bottom: 10px;
+        }
+
+        .why-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .icon-circle {
+            width: 40px;
+            height: 40px;
+            background: #eaf2ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ayoayo {
+            background: linear-gradient(135deg, #2b7cef, #4c8dff);
+            color: white;
+            padding: 60px;
+            border-radius: 18px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ayoayo::before {
+            content: "";
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            top: -50px;
+            left: -50px;
+        }
+
+        .ayoayo::after {
+            content: "";
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            bottom: -80px;
+            right: -80px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+        }
+
+        .nav-link {
+            color: #555;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            color: #2b7cff;
         }
     </style>
 </head>
 
 <body>
+    <nav class="navbar d-flex justify-content-between align-items-center py-2 px-4">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            <img src="assets/img/logo1.png" width="40" class="me-2">
+            <span style="font-size:22px; font-weight:bold;">
+                <span style="color:#0d6efd;">Medi</span>
+                <span style="color:#198754;">Track</span>
+            </span>
+        </a>
+        <div class="d-flex align-items-center gap-5">
+            <ul class="navbar-nav d-flex flex-row gap-4 mb-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="#home">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#fitur">Feature</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#whyus">Why Us</a>
+                </li>
+            </ul>
+            <a href="login.php" class="btn btn-outline-primary">Login</a>
+        </div>
 
-<div class="card login-card shadow p-4">
+    </nav>
 
-    <div class="text-center mb-3">
-        <img src="assets/img/logo1.png" width="40" class="mb-2"><br>
-        <span style="font-size:22px; font-weight:bold;">
-            <span style="color:#0d6efd;">Medi</span>
-            <span style="color:#198754;">Track</span>
-        </span>
-    </div>
-
-    <form method="POST">
-        <div id="loginForm"style="margin-top:15px;">
-            <h5>Welcome Back</h5>
-
-            <input type="text" name="username" class="form-control" placeholder="Username" required>
-            <input type="password" name="password" class="form-control" placeholder="Password" required>
-
-            <button name="login" class="btn btn-custom w-100">Sign In</button>
-
-            <div class="small-text text-center">
-                Belum punya akun? 
-                <a href="#" onclick="showRegister()">Register</a>
+    <section class="home" id="home">
+        <div class="container-fluid p-0">
+            <div class="row g-0">
+                <div class="col-7 home-left d-flex align-items-center">
+                    <div>
+                        <h1>Kelola Obatmu Lebih Mudah<br>dan Teratur</h1>
+                        <p>
+                            Catat, pantau, dan kelola obat harianmu dengan sistem sederhana
+                            yang membantu kamu tetap sehat setiap hari.
+                        </p>
+                        <a href="login.php" class="btn btn-main">Mulai Sekarang</a>
+                    </div>
+                </div>
+                <div class="col-5 home-right">
+                    <img src="assets/img/b.jpg" class="img-right">
+                    <div class="bubble bubble-1">
+                        <strong>150+</strong> Obat Tercatat
+                    </div>
+                    <div class="bubble bubble-2">
+                        <strong>Aktif</strong> Monitoring
+                    </div>
+                    <div class="bubble bubble-3">
+                        <strong>Aman</strong> & Pribadi
+                    </div>
+                </div>
             </div>
         </div>
-    </form>
+    </section>
+    <section class="section text-center p-5 d-flex align-items-center" id="fitur">
+        <div class="container">
+            <h2 class="mb-5 text-light">Fitur Utama</h2>
+            <div class="row g-4">
+                <div class="col-md-3 d-flex" style="transition-delay:0.1s">
+                    <div class="box-fitur w-100">
+                        <div class="icon-fitur"><i class="bi bi-capsule-pill"></i></div>
+                        <h5>Data Obat</h5>
+                        <p>Kelola obat pribadi dengan mudah</p>
+                    </div>
+                </div>
 
-    
+                <div class="col-md-3 d-flex" style="transition-delay:0.2s">
+                    <div class="box-fitur w-100">
+                        <div class="icon-fitur"><i class="bi bi-calendar-check"></i></div>
+                        <h5>Kadaluarsa</h5>
+                        <p>Pantau tanggal expired obat</p>
+                    </div>
+                </div>
 
-    <form method="POST">
-        <div id="registerForm" style="display:none; margin-top:15px;">
-            <h5>Create Account</h5>
+                <div class="col-md-3 d-flex" style="transition-delay:0.3s">
+                    <div class="box-fitur w-100">
+                        <div class="icon-fitur"><i class="bi bi-journal-text"></i></div>
+                        <h5>Catatan</h5>
+                        <p>Simpan efek samping & info penting</p>
+                    </div>
+                </div>
 
-            <input type="text" name="nama_lengkap_reg" class="form-control" placeholder="Nama Lengkap" required>
-            <input type="text" name="username_reg" class="form-control" placeholder="Username" required>
-            <div class="form-floating mb-3">
-                <input type="date" class="form-control" name="tgl_lahir_reg" required>
-                <label>Tanggal Lahir</label>
-            </div>
-            <input type="text" name="email_reg" class="form-control" placeholder="Email" required>
-            <input type="text" name="no_hp_reg" class="form-control" placeholder="Nomor Telephone" required>
-            <input type="text" name="alamat_reg" class="form-control" placeholder="Alamat" required>
-            <input type="password" name="password_reg" class="form-control" placeholder="Password" required>
-
-            <button name="register" class="btn btn-custom w-100">Create Account</button>
-
-            <div class="small-text">
-                Sudah punya akun? 
-                <a href="#" onclick="showLogin()">Sign In</a>
+                <div class="col-md-3 d-flex" style="transition-delay:0.4s">
+                    <div class="box-fitur w-100">
+                        <div class="icon-fitur"><i class="bi bi-bar-chart-line"></i></div>
+                        <h5>Monitoring</h5>
+                        <p>Lihat data obat secara teratur</p>
+                    </div>
+                </div>
             </div>
         </div>
-    </form>`
+    </section>
 
-</div>
+    <section class="section" style="padding-top: 80px;" id="whyus">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 d-flex justify-content-center">
+                    <img src="assets/img/a.jpg" width="210">
+                </div>
+                <div class="col-md-6">
+                    <h3><b>Kenapa MediTrack?</b></h3>
+                    <div class="why-box mt-4">
+                        <div class="icon-circle"><i class="bi bi-check"></i></div>
+                        <div>
+                            <strong>Mudah digunakan</strong>
+                            <p class="mb-0">Interface sederhana dan cepat dipahami</p>
+                        </div>
+                    </div>
+                    <div class="why-box">
+                        <div class="icon-circle"><i class="bi bi-shield-check"></i></div>
+                        <div>
+                            <strong>Aman & pribadi</strong>
+                            <p class="mb-0">Data hanya untuk pengguna sendiri</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<script>
-function showRegister(){
-    document.getElementById("loginForm").style.display="none";
-    document.getElementById("registerForm").style.display="block";
-}
+    <section class="section">
+        <div class="container">
+            <div class="ayoayo text-center">
+                <h3>Mulai Kelola Obatmu Sekarang</h3>
+                <p>Lebih teratur dan aman setiap hari</p>
+            </div>
+        </div>
+    </section>
 
-function showLogin(){
-    document.getElementById("loginForm").style.display="block";
-    document.getElementById("registerForm").style.display="none";
-}
-</script>
+    <footer>
+        © 2026 MediTrack
+    </footer>
 
 </body>
+
 </html>
-
-<?php
-
-if(isset($_POST['register'])){
-    $username = $_POST['username_reg'];
-    $password = md5($_POST['password_reg']);
-    $nama_lengkap = $_POST['nama_lengkap_reg'];
-    $email = $_POST['email_reg'];
-    $tgl_lahir = $_POST['tgl_lahir_reg'];
-    $no_hp = $_POST['no_hp_reg'];
-    $alamat = $_POST['alamat_reg'];
-
-    $cek = mysqli_query($conn, "SELECT * FROM users WHERE username='$username'");
-
-    if(mysqli_num_rows($cek) > 0){
-        echo "<script>alert('Username sudah digunakan!');</script>";
-    } else {
-        mysqli_query($conn, "INSERT INTO users (username, password, role, nama_lengkap, email, tgl_lahir, no_hp, alamat) 
-                             VALUES ('$username','$password','user','$nama_lengkap', '$email', '$tgl_lahir ', '$no_hp', '$alamat' )");
-
-        echo "<script>alert('Register berhasil, silakan login');</script>";
-    }
-}
-?>

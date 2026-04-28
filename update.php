@@ -2,7 +2,19 @@
 session_start();
 include "koneksi.php";
 
-$user_id = $_SESSION['id']; 
+if (isset($_GET['why']) && $_GET['why'] == 'admin' && isset($_GET['pesan'])) {
+    $idobat = $_GET['id'];
+    $catatan = $_GET['pesan'];
+    $query = $conn->query("UPDATE obat set catatan = '$catatan' where id = $idobat");
+
+    echo json_encode([
+        "status" => "success",
+        "message" => "Berhasil update data"
+    ]);
+    die;
+}
+
+$user_id = $_SESSION['id'];
 
 $namaObat = $_POST['nama_obat'];
 $dosis = $_POST['dosis'];
@@ -19,7 +31,7 @@ if ($_GET['why'] == 'save') {
     $query = $conn->query("INSERT INTO obat
             (user_id, nama_obat, dosis, jumlah, kategori , cara_penggunaan, efek_samping, tanggal_kadaluarsa, catatan, resep_dokter, frekuensi_pemakaian)
             values ($user_id, '$namaObat', '$dosis', $jumlah, '$kategori' , '$caraKonsumsi', '$efekSamping', '$tglKadaluarsa', '$catatan', '$resepdokter', $frekuensi)");
-} else { 
+} else {
     $id = $_GET['why'];
     $query = $conn->query("UPDATE obat SET
                             nama_obat = '$namaObat'

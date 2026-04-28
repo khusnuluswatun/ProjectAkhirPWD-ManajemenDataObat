@@ -1,16 +1,24 @@
 <?php
-if (!isset($_GET['id'])) {
-    echo "sabar";
+include "koneksi.php";
+session_start();
+if (!isset($_SESSION['id'])) {
+    header("location:login.php");
+    die;
+} elseif (!isset($_GET['id']) || !$_GET['id']) {
+    header("location:dashboard.php");
     die;
 }
 
 $id = $_GET['id'];
-include "koneksi.php";
 $query = $conn->query("SELECT * FROM obat WHERE id = $id");
 
 if (mysqli_num_rows($query) == 0) {
-    echo "sabar 2";
-    die;
+
+    echo "<script>
+alert('Data tidak ditemukan');
+window.location.href='dashboard.php';
+</script>";
+    exit;
 }
 
 $data = mysqli_fetch_assoc($query);
@@ -22,8 +30,8 @@ $es = explode("||", $data['efek_samping']);
 
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
     <div class="row m-4">
-        <h1 class="modal-title fs-4 mb-2 fw-bold text-center"><i class="fa fa-pencil"></i> Edit obat</h1>
         <div class="card">
+            <h1 class="modal-title fs-4 mt-4 fw-bold text-center"><i class="fa fa-pencil"></i> Edit obat</h1>
             <div class="card-body">
                 <form action="update.php?why=<?= $id ?>" method="post">
                     <div class="mb-2">
@@ -78,8 +86,8 @@ $es = explode("||", $data['efek_samping']);
                         <input <?= in_array('Lainnya', $es) ? 'checked' : '' ?> type="checkbox" class="form-check-input ms-4" name="efek_samping[]" value="Lainnya"> Lainnya <br>
                     </div>
                     <div class="mb-2">
-                        <label for="catatan" class="col-form-label">Resep Dokter/Catatan</label>
-                        <textarea name="catatan" id="catatan" class="form-control"><?= $data['catatan'] ?></textarea>
+                        <label for="catatan" class="col-form-label">Balasan dokter</label>
+                        <textarea name="catatan" id="catatan" class="form-control" readonly><?= $data['catatan'] ? $data['catatan'] : '-' ?></textarea>
                     </div>
                     <div class="mt-3 d-flex justify-content-center">
                         <button type="submit" class="btn btn-primary">Save changes</button>

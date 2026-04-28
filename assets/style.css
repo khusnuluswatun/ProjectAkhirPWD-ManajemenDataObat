@@ -40,7 +40,8 @@
     font-size: 12px;
 }
 
-#tbl-dataObat th {
+#tbl-dataObat th,
+#tbl-profile th {
     background-color: #6caeed;
     vertical-align: middle;
 }

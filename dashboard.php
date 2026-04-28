@@ -2,29 +2,62 @@
 
 session_start();
 include "koneksi.php";
-$id = $_SESSION['id'];
 
-$query = mysqli_query($conn, "SELECT * FROM obat WHERE user_id = '$id'");
-$data = [];
-while ($row = mysqli_fetch_assoc($query)) {
-    $data[] = $row;
+if (!isset($_SESSION['id'])) {
+    header("location:login.php");
+    die;
 }
 
-$akanKadaluarsa = $sudahKadaluarsa = 0;
-$stokTersedia = count($data);
+$id = $_SESSION['id'];
+
+$dtCard = [];
+$data = [];
+if ($_SESSION['role'] == 'admin') {
+    $q1 = mysqli_query($conn, "SELECT * FROM users WHERE role = 'user'");
+    while ($row = mysqli_fetch_assoc($q1)) {
+        $data[$row['id']]['nama_lengkap'] = $row['nama_lengkap'];
+        $query = mysqli_query($conn, "SELECT * FROM obat WHERE user_id = " . $row['id'] . "");
+        $data[$row['id']]['data'] = [];
+        while ($row2 = mysqli_fetch_assoc($query)) {
+            $data[$row['id']]['data'][] = $row2;
+        }
+    }
+} else {
+    $data[$id]['nama_lengkap'] = '';
+    $data[$id]['data'] = [];
+
+    $query = mysqli_query($conn, "SELECT * FROM obat WHERE user_id = '$id'");
+    while ($row2 = mysqli_fetch_assoc($query)) {
+        $data[$id]['data'][] = $row2;
+    }
+}
+
+
+$akanKadaluarsa = 0;
+$sudahKadaluarsa = 0;
+$stokTersedia = 0;
+$totalObat = 0;
+
 $today = new DateTime();
 $nextMonth = (new DateTime())->modify('+2 week');
 
-foreach ($data as $item => $v) {
-    $expired = new DateTime($v['tanggal_kadaluarsa']);
-    if ($expired < $today) {
-        $sudahKadaluarsa++;
-    } elseif ($expired <= $nextMonth) {
-        $akanKadaluarsa++;
+foreach ($data as $a) {
+    if (!isset($a['data']) || !is_array($a['data'])) {
+        continue;
     }
 
-    if ($v['jumlah'] == 0) {
-        $stokTersedia--;
+    foreach ($a['data'] as $v) {
+        $totalObat++;
+        if ((int)$v['jumlah'] > 0) {
+            $stokTersedia++;
+        }
+
+        $expired = new DateTime($v['tanggal_kadaluarsa']);
+        if ($expired < $today) {
+            $sudahKadaluarsa++;
+        } elseif ($expired <= $nextMonth) {
+            $akanKadaluarsa++;
+        }
     }
 }
 
@@ -40,7 +73,7 @@ foreach ($data as $item => $v) {
                     <div class="card-img-div">
                         <img src="https://cdn-icons-png.flaticon.com/512/679/679821.png" alt="">
                     </div>
-                    <span class="card-count"><?= $query->num_rows; ?></span><br>
+                    <span class="card-count"><?= $totalObat; ?></span><br>
                     <span class="card-text">Total obat</span>
                 </div>
             </div>
@@ -80,53 +113,61 @@ foreach ($data as $item => $v) {
         </div>
     </div>
     <!-- <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas> -->
-
-    <div class="card my-3">
-        <div class="card-body">
-            <div class="d-flex justify-content-between mt-2 mb-4">
-                <h3>Data Obat</h3>
-                <button type="button" class="btn btn-primary btn-sm px-3" data-bs-toggle="modal" data-bs-target="#mdlTambahObat"><i class="fa fa-plus"></i> Tambah Obat</button>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-striped table-bordered" id="tbl-dataObat">
-                    <thead>
-                        <tr>
-                            <th>No.</th>
-                            <th>Nama Obat</th>
-                            <th>Dosis</th>
-                            <th>Jumlah</th>
-                            <th>Cara Konsumsi</th>
-                            <th>Efek Samping</th>
-                            <th>Tanggal Expired</th>
-                            <th>Catatan</th>
-                            <th style="text-align:center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php $no = 1;
-                        foreach ($data as $d) { ?>
+    <?php foreach ($data as $k => $v) { ?>
+        <div class="card my-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between mt-2 mb-4">
+                    <h4>Data Obat <b><?= $v['nama_lengkap'] ?></b></h4>
+                    <?php if ($_SESSION['role'] == 'user') { ?>
+                        <button type="button" class="btn btn-primary btn-sm px-3" data-bs-toggle="modal" data-bs-target="#mdlTambahObat"><i class="fa fa-plus"></i> Tambah Obat</button>
+                    <?php } ?>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered" id="tbl-dataObat">
+                        <thead>
                             <tr>
-                                <td class="text-center"><?= $no ?>.</td>
-                                <td><?= $d['nama_obat'] ?></td>
-                                <td><?= $d['dosis'] ?></td>
-                                <td><?= $d['jumlah'] ?></td>
-                                <td><?= $d['cara_penggunaan'] ?></td>
-                                <td><?= $d['efek_samping'] ? str_replace("||", ", ", $d['efek_samping']) : '-' ?></td>
-                                <td><?= $d['tanggal_kadaluarsa'] ?></td>
-                                <td><?= $d['catatan'] ? $d['catatan'] : '-' ?></td>
-                                <td class="d-flex justify-content-center">
-                                    <button type="button" class="btn btn-sm btn-info" title="Detail obat" onclick="alert('proses')"><i class="fa fa-book"></i></button>
-                                    <a href="edit.php?id=<?= $d['id'] ?>" class="btn btn-sm btn-warning ms-2" title="Edit obat"><i class="fa fa-pencil"></i></a>
-                                    <button type="button" class="btn btn-sm btn-danger ms-2" onclick="deleteObat(<?= $d['id'] ?>)" title="Hapus obat"><i class="fa fa-trash"></i></button>
-                                </td>
+                                <th>No.</th>
+                                <th>Nama Obat</th>
+                                <th>Dosis</th>
+                                <th>Jumlah</th>
+                                <th>Cara Konsumsi</th>
+                                <th>Efek Samping</th>
+                                <th>Tanggal Expired</th>
+                                <th>Balasan Dokter</th>
+                                <th style="text-align:center">Action</th>
                             </tr>
-                        <?php $no++;
-                        } ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <?php $no = 1;
+                            foreach ($v['data'] as $d) { ?>
+                                <tr>
+                                    <td class="text-center"><?= $no ?>.</td>
+                                    <td><?= $d['nama_obat'] ?></td>
+                                    <td><?= $d['dosis'] ?></td>
+                                    <td><?= $d['jumlah'] ?></td>
+                                    <td><?= $d['cara_penggunaan'] ?></td>
+                                    <td><?= $d['efek_samping'] ? str_replace("||", ", ", $d['efek_samping']) : '-' ?></td>
+                                    <td><?= $d['tanggal_kadaluarsa'] ?></td>
+                                    <td><?= $d['catatan'] ? $d['catatan'] : '-' ?></td>
+                                    <td class="d-flex justify-content-center">
+                                        <?php if ($_SESSION['role'] == 'user') { ?>
+                                            <!-- <button type="button" class="btn btn-sm btn-info" title="Detail obat" onclick="alert('proses')"><i class="fa fa-book"></i></button> -->
+                                            <a href="edit.php?id=<?= $d['id'] ?>" class="btn btn-sm btn-warning ms-2" title="Edit obat"><i class="fa fa-pencil"></i></a>
+                                            <button type="button" class="btn btn-sm btn-danger ms-2" onclick="deleteObat(<?= $d['id'] ?>)" title="Hapus obat"><i class="fa fa-trash"></i></button>
+                                        <?php } else { ?>
+                                            <button type="button" class="btn btn-sm btn-secondary ms-2" onclick="balas(<?= $d['id'] ?>)">Balas</button>
+                                        <?php } ?>
+
+                                    </td>
+                                </tr>
+                            <?php $no++;
+                            } ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
+    <?php } ?>
 </main>
 
 <!-- Modal -->
@@ -185,16 +226,16 @@ foreach ($data as $item => $v) {
                         <input type="radio" class="form-check-input ms-4" name="cara_penggunaan" value="Oles pada area sakit"> Oles pada area sakit
                     </div>
                     <div class="mb-2">
-                        <label class="col-form-label">Efek samping</label><br>
+                        <label class="col-form-label">Efek samping (jika ada)</label><br>
                         <input type="checkbox" class="form-check-input" name="efek_samping[]" value="Pusing"> Pusing
                         <input type="checkbox" class="form-check-input ms-4" name="efek_samping[]" value="Diare"> Diare
                         <input type="checkbox" class="form-check-input ms-4" name="efek_samping[]" value="Muntah"> Muntah
                         <input type="checkbox" class="form-check-input ms-4" name="efek_samping[]" value="Lainnya"> Lainnya <br>
                     </div>
-                    <div class="mb-2">
+                    <!-- <div class="mb-2">
                         <label for="catatan" class="col-form-label">Resep Dokter/Catatan</label>
                         <textarea name="catatan" id="catatan" class="form-control"></textarea>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

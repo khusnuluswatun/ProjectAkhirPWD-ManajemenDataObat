@@ -5,10 +5,10 @@ CREATE TABLE users (
     role ENUM('user', 'admin'),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     nama_lengkap VARCHAR(50) NOT NULL,
-    email VARCHAR(50) NOT NULL,
-    tgl_lahir date DEFAULT NUL,
-    no_hp VARCHAR(13) NOT NULL,
-    alamat VARCHAR(50) NOT NULL
+    email VARCHAR(50) NOT NULL
+    -- tgl_lahir date DEFAULT NUL,
+    -- no_hp VARCHAR(13) NOT NULL,
+    -- alamat VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE obat (

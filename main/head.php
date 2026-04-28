@@ -38,13 +38,12 @@ if (session_status() === PHP_SESSION_NONE) {
     </svg>
 
     <header class="navbar sticky-top navbar-light bg-white shadow-sm px-3">
-        <a class="navbar-brand d-flex align-items-center bg-white gap-2" href="#">
+        <a class="navbar-brand d-flex align-items-center bg-white gap-2" href="index.php">
             <img src="assets/img/logo1.png" width="32">
             <span class="fw-bold">
                 <span class="text-primary">Medi</span><span class="text-success">Track</span>
             </span>
         </a>
-        <!-- <input class="form-control form-control w-100" type="text" placeholder="Search" aria-label="Search"> -->
         <div class="d-flex align-items-center gap-2">
             <img src="assets/img/profile.png" class="img-profile"> <?= strtoupper($_SESSION['nama_lengkap']); ?>
         </div>
@@ -64,7 +63,7 @@ if (session_status() === PHP_SESSION_NONE) {
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="profile.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'profile.php' ? 'active' : '' ?>">
+                            <a href="<?= basename($_SESSION['role']) == 'admin' ? 'profileAdmin.php' : 'profile.php' ?>" class="nav-link <?= (basename($_SERVER['PHP_SELF']) == 'profile.php' || basename($_SERVER['PHP_SELF']) == 'profileAdmin') ? 'active' : '' ?>">
                                 <svg class="bi me-2" width="16" height="16">
                                     <use xlink:href="#people-circle" />
                                 </svg>
