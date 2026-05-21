@@ -4,7 +4,7 @@ session_start();
 include "koneksi.php";
 
 if (!isset($_SESSION['id'])) {
-    header("location:login.php");
+    header("location:index.php");
     die;
 }
 
@@ -15,7 +15,7 @@ $data = [];
 if ($_SESSION['role'] == 'admin') {
     $q1 = mysqli_query($conn, "SELECT * FROM users WHERE role = 'user'");
     while ($row = mysqli_fetch_assoc($q1)) {
-        $data[$row['id']]['nama_lengkap'] = $row['nama_lengkap'];
+        $data[$row['id']]['nama'] = $row['nama_lengkap'];
         $query = mysqli_query($conn, "SELECT * FROM obat WHERE user_id = " . $row['id'] . "");
         $data[$row['id']]['data'] = [];
         while ($row2 = mysqli_fetch_assoc($query)) {
@@ -23,7 +23,7 @@ if ($_SESSION['role'] == 'admin') {
         }
     }
 } else {
-    $data[$id]['nama_lengkap'] = '';
+    $data[$id]['nama'] = '';
     $data[$id]['data'] = [];
 
     $query = mysqli_query($conn, "SELECT * FROM obat WHERE user_id = '$id'");
@@ -117,7 +117,7 @@ foreach ($data as $a) {
         <div class="card my-3">
             <div class="card-body">
                 <div class="d-flex justify-content-between mt-2 mb-4">
-                    <h4>Data Obat <b><?= $v['nama_lengkap'] ?></b></h4>
+                    <h4>Data Obat <b><?= $v['nama'] ?></b></h4>
                     <?php if ($_SESSION['role'] == 'user') { ?>
                         <button type="button" class="btn btn-primary btn-sm px-3" data-bs-toggle="modal" data-bs-target="#mdlTambahObat"><i class="fa fa-plus"></i> Tambah Obat</button>
                     <?php } ?>

@@ -58,7 +58,7 @@ function deleteObat(id) {
 
 function balas(id) {
     Swal.fire({
-        title: 'Balasan dokter',
+        title: 'Beri Balasan',
         input: "textarea",
         showCancelButton: true,
         confirmButtonText: 'Submit',
